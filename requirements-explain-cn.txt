@@ -1,0 +1,53 @@
+# MiniMind 项目依赖包说明
+
+## 核心框架
+- **torch==2.6.0** - PyTorch 深度学习框架，用于模型训练和推理
+- **torchvision==0.21.0** - PyTorch 视觉库，用于图像数据处理
+- **transformers==4.57.1** - Hugging Face Transformers 库，提供预训练模型和分词器
+- **datasets==3.6.0** - Hugging Face 数据集库，用于高效加载和处理训练数据
+
+## 训练相关
+- **peft==0.7.1** - 参数高效微调库（Parameter-Efficient Fine-Tuning），支持 LoRA、AdaLoRA 等方法
+- **trl==0.13.0** - 强化学习训练库（Transformer Reinforcement Learning），用于 RLHF 训练
+- **einops==0.8.1** - 张量操作库，提供优雅的张量变换接口
+
+## 文本处理
+- **jieba==0.42.1** - 中文分词库，用于文本预处理
+- **tiktoken==0.10.0** - OpenAI 的分词器，用于 token 计数
+- **nltk==3.8** - 自然语言处理工具包，提供文本分析功能
+- **sentence_transformers==2.3.1** - 句子嵌入/向量化库，用于文本相似度计算
+
+## 数据处理
+- **numpy==1.26.4** - 数值计算基础库，用于数组操作
+- **scikit_learn==1.5.1** - 机器学习工具库，提供聚类、分类等算法
+- **jsonlines==4.0.0** - JSON Lines 格式处理，用于读写训练数据
+- **ujson==5.1.0** - 高性能 JSON 解析库
+
+## Web 服务
+- **Flask==3.0.3** - 轻量级 Web 框架，用于 API 服务器
+- **Flask_Cors==4.0.0** - Flask 跨域资源共享（CORS）支持
+- **streamlit==1.50.0** - Web 应用框架，用于快速构建交互式界面
+- **openai==1.59.6** - OpenAI API 客户端，用于调用大模型 API
+- **ngrok==1.4.0** - 内网穿透工具，用于本地服务公网访问
+- **jinja2==3.1.2** - 模板引擎，用于生成提示词模板
+
+## 监控与可视化
+- **wandb==0.18.3** - Weights & Biases 实验跟踪平台，用于训练监控
+- **swanlab==0.6.8** - SwanLab 实验跟踪工具，wandb 的替代方案
+- **matplotlib==3.10.0** - 绘图库，用于数据可视化
+- **rich==13.7.1** - 终端美化库，用于彩色输出和进度条
+- **psutil==5.9.8** - 系统进程监控库，用于资源使用统计
+
+## 数据质量与验证
+- **datasketch==1.6.4** - 数据素描库，用于相似度计算和去重
+- **simhash==2.1.2** - SimHash 算法，用于文本相似度哈希和去重
+- **marshmallow==3.22.0** - 对象序列化和验证库
+- **pydantic==2.11.5** - 数据验证库，使用 Python 类型注解
+
+## 总结
+这些依赖包共同构成了 MiniMind 的完整技术栈：
+- **模型层**：PyTorch + Transformers + PEFT
+- **数据层**：Datasets + 文本处理工具
+- **训练层**：TRL + 监控工具
+- **服务层**：Flask + Streamlit + OpenAI API
+- **工具层**：数据处理、可视化、系统监控
