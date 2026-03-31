@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find \"E:\\\\ws_python\\\\minimind\" -type f -name \"*.py\" ! -path \"*/.venv/*\" ! -path \"*/.git/*\" ! -path \"*/__pycache__/*\" ! -path \"*/.mypy_cache/*\" 2>/dev/null | head -50)"
+      "Bash(find \"E:\\\\ws_python\\\\minimind\" -type f -name \"*.py\" ! -path \"*/.venv/*\" ! -path \"*/.git/*\" ! -path \"*/__pycache__/*\" ! -path \"*/.mypy_cache/*\" 2>/dev/null | head -50)",
+      "mcp__plugin_claude-mem_mcp-search__search",
+      "Bash(ls -la weekly* 周报*)",
+      "Bash(find . -type d -name *weekly* -o -name *report* -o -name *周报*)"
     ]
   }
 }
