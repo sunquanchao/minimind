@@ -4,6 +4,7 @@ import sys
 __package__ = "trainer"
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import datasets  # noqa: F401  # Windows pyarrow/torch DLL conflict workaround (issue #771)
 import argparse
 import math
 import re
@@ -86,20 +87,21 @@ def grpo_train_epoch(epoch, loader, iters, rollout_engine, ref_model, reward_mod
         outputs = rollout_result.output_ids
         completion_ids = rollout_result.completion_ids
         completions = rollout_result.completions
-        old_per_token_logps = rollout_result.per_token_logps.to(args.device)
+        old_per_token_logps = rollout_result.per_token_logps.to(args.device).detach()
         prompt_lens = rollout_result.prompt_lens.to(args.device)
         full_mask = (outputs != tokenizer.pad_token_id).long()
         logp_pos = prompt_lens.unsqueeze(1) - 1 + torch.arange(completion_ids.size(1), device=args.device).unsqueeze(0)
+
+        rewards = calculate_rewards(prompts, completions, reward_model).to(args.device)  # [B*num_gen]
 
         model_unwrapped = model.module if isinstance(model, DistributedDataParallel) else model
         with autocast_ctx:
             res = model_unwrapped(outputs, attention_mask=full_mask)
             aux_loss = res.aux_loss if lm_config.use_moe else torch.tensor(0.0, device=args.device)
             per_token_logps = F.log_softmax(res.logits[:, :-1, :], dim=-1).gather(2, outputs[:, 1:].unsqueeze(-1)).squeeze(-1).gather(1, logp_pos)
-        
+
         with torch.no_grad():
             ref_per_token_logps = F.log_softmax(ref_model(outputs, attention_mask=full_mask).logits[:, :-1, :], dim=-1).gather(2, outputs[:, 1:].unsqueeze(-1)).squeeze(-1).gather(1, logp_pos)
-        rewards = calculate_rewards(prompts, completions, reward_model).to(args.device)  # [B*num_gen]
 
         if args.debug_mode and is_main_process() and step % args.debug_interval == 0:
             for i in range(len(prompts)):
@@ -327,4 +329,6 @@ if __name__ == "__main__":
             grpo_train_epoch(epoch, loader, len(loader), rollout_engine, ref_model, reward_model, 0, wandb, use_sglang = (args.rollout_engine == "sglang"))
     
     # ========== 9. 清理分布进程 ==========
-    if dist.is_initialized(): dist.destroy_process_group()
+    if dist.is_initialized():
+        dist.barrier()
+        dist.destroy_process_group()
